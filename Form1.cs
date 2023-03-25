@@ -1,5 +1,3 @@
-using System.Text.Json;
-
 namespace password_generator
 {
     public partial class Form1 : Form
