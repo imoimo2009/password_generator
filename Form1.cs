@@ -14,7 +14,9 @@ namespace password_generator
             lbl_passfore.Location = new System.Drawing.Point(-3, -3);
 
             // パラメータを初期値にセット
-            if (!LoadINIFile()){ ResetParam(); }
+            if (!LoadINIFile()) { ResetParam(); }
+
+            sb_times.Maximum = sb_length.Value;
 
             // パスワードを作成する
             _ = GenPassword();
@@ -30,12 +32,8 @@ namespace password_generator
         /// </summary>
         private void ResetParam()
         {
-            sb_length.Maximum = MAX_LENGTH;
-            sb_length.Minimum = MIN_LENGTH;
             sb_length.Value = DEFAULT_LENGTH;
 
-            sb_times.Maximum = sb_length.Value;
-            sb_times.Minimum = 1;
             sb_times.Value = DEFAULT_TIMES;
 
             cb_numeric.Checked = true;
@@ -52,30 +50,31 @@ namespace password_generator
         }
 
         /// <summary>
-        /// INIファイルを読み込み、パラメータを復元する
+        /// INIファイルを読み込み、指定セクションのパラメータを復元する
         /// </summary>
+        /// <param name="section">セクション名</param>
         /// <returns></returns>
-        private bool LoadINIFile()
+        private bool LoadINIFile(string section)
         {
             INIClass ini = new(INI_FILE_NAME);
 
-            if(ini.GetInt(INI_DEFAULT, INI_LENGTH) > 0)
+            if (ini.GetInt(section, INI_LENGTH) > 0)
             {
-                sb_length.Value = ini.GetInt(INI_DEFAULT, INI_LENGTH);
+                sb_length.Value = ini.GetInt(section, INI_LENGTH);
 
-                sb_times.Value = ini.GetInt(INI_DEFAULT, INI_TIMES);
-                
-                cb_numeric.Checked = ini.GetBool(INI_DEFAULT, INI_NUMERIC_CHK);
-                tb_numeric.Text = ini.GetString(INI_DEFAULT, INI_NUMERIC_TXT);
-                
-                cb_ucase.Checked = ini.GetBool(INI_DEFAULT, INI_UCASE_CHK);
-                tb_ucase.Text = ini.GetString(INI_DEFAULT, INI_UCASE_TXT);
-                
-                cb_lcase.Checked = ini.GetBool(INI_DEFAULT, INI_LCASE_CHK);
-                tb_lcase.Text = ini.GetString(INI_DEFAULT, INI_LCASE_TXT);
-                
-                cb_symbol.Checked = ini.GetBool(INI_DEFAULT, INI_SYMBOL_CHK);
-                tb_symbol.Text = ini.GetString(INI_DEFAULT, INI_SYMBOL_TXT);
+                sb_times.Value = ini.GetInt(section, INI_TIMES);
+
+                cb_numeric.Checked = ini.GetBool(section, INI_NUMERIC_CHK);
+                tb_numeric.Text = ini.GetString(section, INI_NUMERIC_TXT);
+
+                cb_ucase.Checked = ini.GetBool(section, INI_UCASE_CHK);
+                tb_ucase.Text = ini.GetString(section, INI_UCASE_TXT);
+
+                cb_lcase.Checked = ini.GetBool(section, INI_LCASE_CHK);
+                tb_lcase.Text = ini.GetString(section, INI_LCASE_TXT);
+
+                cb_symbol.Checked = ini.GetBool(section, INI_SYMBOL_CHK);
+                tb_symbol.Text = ini.GetString(section, INI_SYMBOL_TXT);
 
                 return true;
             }
@@ -83,30 +82,50 @@ namespace password_generator
         }
 
         /// <summary>
-        /// INIファイルにパラメータを保存する
+        /// INIファイルを読み込み、デフォルトパラメータを復元する
         /// </summary>
-        private bool SaveINIFile()
+        /// <returns>処理結果(bool)</returns>
+        private bool LoadINIFile()
+        {
+            return LoadINIFile(INI_DEFAULT);
+        }
+
+        /// <summary>
+        /// INIファイルの指定セクションにパラメータを保存する
+        /// </summary>
+        /// <param name="section">セクション名</param>
+        /// <returns>処理結果(bool)</returns>
+        private bool SaveINIFile(string section)
         {
             bool ret = true;
             INIClass ini = new(INI_FILE_NAME);
 
-            ret &= ini.Write(INI_DEFAULT, INI_LENGTH, sb_length.Value.ToString());
-            
-            ret &= ini.Write(INI_DEFAULT, INI_TIMES, sb_times.Value.ToString());
-            
-            ret &= ini.Write(INI_DEFAULT, INI_NUMERIC_CHK, cb_numeric.Checked ? "1" : "0");
-            ret &= ini.Write(INI_DEFAULT, INI_NUMERIC_TXT, tb_numeric.Text);
+            ret &= ini.Write(section, INI_LENGTH, sb_length.Value.ToString());
 
-            ret &= ini.Write(INI_DEFAULT, INI_UCASE_CHK, cb_ucase.Checked ? "1" : "0");
-            ret &= ini.Write(INI_DEFAULT, INI_UCASE_TXT, tb_ucase.Text);
+            ret &= ini.Write(section, INI_TIMES, sb_times.Value.ToString());
 
-            ret &= ini.Write(INI_DEFAULT, INI_LCASE_CHK, cb_lcase.Checked ? "1" : "0");
-            ret &= ini.Write(INI_DEFAULT, INI_LCASE_TXT, tb_lcase.Text);
+            ret &= ini.Write(section, INI_NUMERIC_CHK, cb_numeric.Checked ? "1" : "0");
+            ret &= ini.Write(section, INI_NUMERIC_TXT, tb_numeric.Text);
 
-            ret &= ini.Write(INI_DEFAULT, INI_SYMBOL_CHK, cb_symbol.Checked ? "1" : "0");
-            ret &= ini.Write(INI_DEFAULT, INI_SYMBOL_TXT, tb_symbol.Text);
+            ret &= ini.Write(section, INI_UCASE_CHK, cb_ucase.Checked ? "1" : "0");
+            ret &= ini.Write(section, INI_UCASE_TXT, tb_ucase.Text);
+
+            ret &= ini.Write(section, INI_LCASE_CHK, cb_lcase.Checked ? "1" : "0");
+            ret &= ini.Write(section, INI_LCASE_TXT, tb_lcase.Text);
+
+            ret &= ini.Write(section, INI_SYMBOL_CHK, cb_symbol.Checked ? "1" : "0");
+            ret &= ini.Write(section, INI_SYMBOL_TXT, tb_symbol.Text);
 
             return ret;
+        }
+
+        /// <summary>
+        /// INIファイルのデフォルトセクションにパラメータを保存する
+        /// </summary>
+        /// <returns>処理結果(bool)</returns>
+        private bool SaveINIFile()
+        {
+            return SaveINIFile(INI_DEFAULT);
         }
 
         /// <summary>
@@ -122,9 +141,16 @@ namespace password_generator
                 new(){ {"name","lcase"},{"checked",cb_lcase.Checked},{"text",tb_lcase.Text} },
                 new(){ {"name","symbol"},{"checked",cb_symbol.Checked},{"text",tb_symbol.Text} }
             };
+            // ランダムオブジェクト
+            Random rnd = new();
+            // トークン格納用ディクショナリ
+            Dictionary<string, List<Dictionary<string, object>>> tokens = new();
+            // 文字種初期位置格納用配列
+            string[] place = new string[(int)sb_length.Value];
+            // 重複防止用インデックスリスト
+            List<int> idxs = new(Enumerable.Range(0, (int)sb_length.Value).ToArray<int>());
 
             // チェックされた文字種をトークンリストに登録
-            Dictionary<string, List<Dictionary<string, object>>> tokens = new();
             foreach (var c in ctrl)
             {
                 string name = (string)c["name"];
@@ -137,22 +163,15 @@ namespace password_generator
                     {
                         tokens[name].Add(new() { { "char", cc }, { "times", (int)sb_times.Value } });
                     }
+                    // 各文字種の初期挿入位置を決める（各文字種を必ず1回以上使うようにするため）
+                    int r = rnd.Next(0, idxs.Count);
+                    place[idxs[r]] = name;
+                    idxs.RemoveAt(r);
                 }
             }
 
             // 文字種がいっこも選択されていないときは処理を終了する
             if (tokens.Count == 0) { return false; }
-
-            // 各文字種の初期挿入位置を決める（各文字種を必ず1回以上使うようにするため）
-            Random rnd = new();
-            string[] place = new string[(int)sb_length.Value];
-            List<int> idxs = new(Enumerable.Range(0, (int)sb_length.Value).ToArray<int>());
-            foreach (string s in tokens.Keys)
-            {
-                int r = rnd.Next(0, idxs.Count);
-                place[idxs[r]] = s;
-                idxs.RemoveAt(r);
-            }
 
             // パスワード作成処理
             string passwd = "";
@@ -170,8 +189,9 @@ namespace password_generator
                 if (tokens[k].Count > 0)
                 {
                     int r = rnd.Next(0, tokens[k].Count);
-                    passwd += tokens[k][r]["char"];
                     int c = (int)tokens[k][r]["times"];
+
+                    passwd += tokens[k][r]["char"];
                     tokens[k][r]["times"] = --c;
                     if (c <= 0)
                     {
@@ -183,6 +203,7 @@ namespace password_generator
             // ラベルコントロールにパスワードを表示する
             lbl_passfore.Text = passwd;
             lbl_passback.Text = passwd;
+
             return true;
         }
 

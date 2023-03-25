@@ -52,9 +52,12 @@
             // sb_length
             // 
             sb_length.Location = new Point(99, 12);
+            sb_length.Maximum = new decimal(new int[] { 15, 0, 0, 0 });
+            sb_length.Minimum = new decimal(new int[] { 5, 0, 0, 0 });
             sb_length.Name = "sb_length";
             sb_length.Size = new Size(48, 23);
             sb_length.TabIndex = 0;
+            sb_length.Value = new decimal(new int[] { 5, 0, 0, 0 });
             sb_length.ValueChanged += sb_length_ValueChanged;
             // 
             // lbl_length
@@ -78,9 +81,12 @@
             // sb_times
             // 
             sb_times.Location = new Point(264, 12);
+            sb_times.Maximum = new decimal(new int[] { 99, 0, 0, 0 });
+            sb_times.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
             sb_times.Name = "sb_times";
             sb_times.Size = new Size(48, 23);
             sb_times.TabIndex = 2;
+            sb_times.Value = new decimal(new int[] { 1, 0, 0, 0 });
             // 
             // btn_reset
             // 

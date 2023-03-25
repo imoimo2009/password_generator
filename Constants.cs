@@ -6,10 +6,7 @@
         private const string APP_VERSION = "1.0.0";
 
         private const int DEFAULT_LENGTH = 8;
-        private const int MAX_LENGTH = 15;
-        private const int MIN_LENGTH = 5;
         private const int DEFAULT_TIMES = 3;
-        private const int MAX_TIMES = 99;
 
         private const string NUMERIC_CHRS = "0123456789";
         private const string UCASE_CHRS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
